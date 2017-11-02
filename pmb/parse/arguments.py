@@ -51,7 +51,8 @@ def arguments_flasher(subparser):
         action.add_argument("--flavor", default=None)
 
     # Flash system
-    flash_system = sub.add_parser("flash_system", help="flash the system partition")
+    flash_system = sub.add_parser(
+        "flash_system", help="flash the system partition")
     flash_system.add_argument("--partition", default=None, help="partition to flash"
                               " the system image")
 
@@ -230,15 +231,13 @@ def arguments():
                          help="do not overwrite the existing kernel",
                          action="store_false", dest="recovery_flash_kernel")
 
-    # Action: menuconfig / parse_apkbuild
+    # Action: menuconfig
     menuconfig = sub.add_parser("menuconfig", help="run menuconfig on"
                                 " a kernel aport")
     menuconfig.add_argument("--arch", choices=arch_choices)
-    parse_apkbuild = sub.add_parser("parse_apkbuild")
-    for action in [menuconfig, parse_apkbuild]:
-        action.add_argument("package")
+    menuconfig.add_argument("package")
 
-    # Action: build / checksum / aportgen
+    # Action: checksum / aportgen / build
     checksum = sub.add_parser("checksum", help="update aport checksums")
     aportgen = sub.add_parser("aportgen", help="generate a package build recipe"
                               " (aport/APKBUILD) based on an upstream aport from Alpine")
@@ -259,11 +258,13 @@ def arguments():
     for action in [checksum, build, aportgen]:
         action.add_argument("packages", nargs="+")
 
-    # Action: kconfig_check
+    # Action: kconfig_check / parse_apkbuild
     kconfig_check = sub.add_parser("kconfig_check", help="check, whether all"
                                    " the necessary options are"
                                    " enabled/disabled in the kernel config")
-    kconfig_check.add_argument("packages", nargs="*")
+    parse_apkbuild = sub.add_parser("parse_apkbuild")
+    for action in [kconfig_check, parse_apkbuild]:
+        action.add_argument("packages", nargs="*")
 
     # Action: challenge
     challenge = sub.add_parser("challenge",
@@ -296,7 +297,8 @@ def arguments():
     qemu.add_argument("--arch", choices=["aarch64", "arm", "x86_64"],
                       help="emulate a different architecture")
     qemu.add_argument("--cmdline", help="override kernel commandline")
-    qemu.add_argument("--image-size", help="set system image size (e.g. 2048M or 2G)")
+    qemu.add_argument(
+        "--image-size", help="set system image size (e.g. 2048M or 2G)")
     qemu.add_argument("-m", "--memory", type=int, default=1024,
                       help="guest RAM (default: 1024)")
     qemu.add_argument("-p", "--port", type=int, default=2222,
