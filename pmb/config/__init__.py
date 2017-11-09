@@ -56,7 +56,7 @@ defaults = {
     "timestamp_based_rebuild": True,
     "log": "$WORK/log.txt",
     "mirror_alpine": "http://dl-cdn.alpinelinux.org/alpine/",
-    "mirror_postmarketos": "",
+    "mirror_postmarketos": "http://postmarketos.brixit.nl",
     "work": os.path.expanduser("~") + "/.local/var/pmbootstrap",
     "port_distccd": "33632",
     "qemu_mesa_driver": "dri-virtio",
