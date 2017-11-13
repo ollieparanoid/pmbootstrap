@@ -17,9 +17,11 @@ You should have received a copy of the GNU General Public License
 along with pmbootstrap.  If not, see <http://www.gnu.org/licenses/>.
 """
 import logging
+import os
 import pmb.helpers.run
 import pmb.aportgen.core
 import pmb.parse.apkindex
+import pmb.parse.bootimg
 
 
 def ask_for_architecture(args):
@@ -79,8 +81,49 @@ def ask_for_flash_method(args):
                       " pmb/config/__init__.py.")
 
 
+def ask_for_bootimg(args):
+    if not pmb.helpers.cli.confirm(args, "Do you want to extract fastboot information from an "
+                                   "existing boot.img?"):
+        return None
+
+    logging.info("Location of the 'boot.img' (stock boot.img, stock recovery.img, twrp.img, ...)")
+    while True:
+        try:
+            path = os.path.expanduser(pmb.helpers.cli.ask(
+                args, "Path", None, None, False))
+            return pmb.parse.bootimg(args, path)
+        except KeyboardInterrupt:
+            return None
+        except Exception as e:
+            logging.fatal("ERROR: " + str(e) + ", Please try again.")
+
+
+def generate_deviceinfo_fastboot_content(args, bootimg):
+    if bootimg is None:
+        bootimg = {}
+        bootimg["cmdline"] = ""
+        bootimg["qcdt"] = "false"
+        bootimg["base"] = ""
+        bootimg["kernel_offset"] = ""
+        bootimg["ramdisk_offset"] = ""
+        bootimg["second_offset"] = ""
+        bootimg["tags_offset"] = ""
+        bootimg["pagesize"] = "2048"
+    return """\
+        deviceinfo_kernel_cmdline=\"""" + bootimg["cmdline"] + """\"
+        deviceinfo_generate_bootimg="true"
+        deviceinfo_bootimg_qcdt=\"""" + bootimg["qcdt"] + """\"
+        deviceinfo_flash_offset_base=\"""" + bootimg["base"] + """\"
+        deviceinfo_flash_offset_kernel=\"""" + bootimg["kernel_offset"] + """\"
+        deviceinfo_flash_offset_ramdisk=\"""" + bootimg["ramdisk_offset"] + """\"
+        deviceinfo_flash_offset_second=\"""" + bootimg["second_offset"] + """\"
+        deviceinfo_flash_offset_tags=\"""" + bootimg["tags_offset"] + """\"
+        deviceinfo_flash_pagesize=\"""" + bootimg["pagesize"] + """\"
+        """
+
+
 def generate_deviceinfo(args, pkgname, name, manufacturer, arch, has_keyboard,
-                        has_external_storage, flash_method):
+                        has_external_storage, flash_method, bootimg):
     content = """\
         # Reference: <https://postmarketos.org/deviceinfo>
         # Please use double quotes only. You can source this file in shell scripts.
@@ -106,18 +149,6 @@ def generate_deviceinfo(args, pkgname, name, manufacturer, arch, has_keyboard,
         deviceinfo_flash_methods=\"""" + flash_method + """\"
         """
 
-    content_fastboot = """\
-        deviceinfo_kernel_cmdline=""
-        deviceinfo_generate_bootimg="true"
-        deviceinfo_bootimg_qcdt="false"
-        deviceinfo_flash_offset_base=""
-        deviceinfo_flash_offset_kernel=""
-        deviceinfo_flash_offset_ramdisk=""
-        deviceinfo_flash_offset_second=""
-        deviceinfo_flash_offset_tags=""
-        deviceinfo_flash_pagesize="2048"
-        """
-
     content_heimdall_bootimg = """\
         deviceinfo_flash_heimdall_partition_kernel=""
         deviceinfo_flash_heimdall_partition_system=""
@@ -134,9 +165,9 @@ def generate_deviceinfo(args, pkgname, name, manufacturer, arch, has_keyboard,
         """
 
     if flash_method == "fastboot":
-        content += content_fastboot
+        content += generate_deviceinfo_fastboot_content(args, bootimg)
     elif flash_method == "heimdall-bootimg":
-        content += content_fastboot
+        content += generate_deviceinfo_fastboot_content(args, bootimg)
         content += content_heimdall_bootimg
     elif flash_method == "heimdall-isorec":
         content += content_heimdall_isorec
@@ -190,7 +221,11 @@ def generate(args, pkgname):
     has_keyboard = ask_for_keyboard(args)
     has_external_storage = ask_for_external_storage(args)
     flash_method = ask_for_flash_method(args)
+    if flash_method in ["fastboot", "heimdall-bootimg"]:
+        bootimg = ask_for_bootimg(args)
+    else:
+        bootimg = None
 
     generate_deviceinfo(args, pkgname, name, manufacturer, arch, has_keyboard,
-                        has_external_storage, flash_method)
+                        has_external_storage, flash_method, bootimg)
     generate_apkbuild(args, pkgname, name, arch, flash_method)

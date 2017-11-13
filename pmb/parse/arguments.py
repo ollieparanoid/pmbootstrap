@@ -316,6 +316,11 @@ def arguments():
     config.add_argument("name", nargs="?", help="variable name")
     config.add_argument("value", nargs="?", help="set variable to value")
 
+    # Action: analyze_bootimg
+    analyze_bootimg = sub.add_parser("analyze_bootimg", help="Extract all the"
+                                     " information from an existing boot.img")
+    analyze_bootimg.add_argument("path", help="path to the boot.img")
+
     # Use defaults from the user's config file
     args = parser.parse_args()
     cfg = pmb.config.load(args)
