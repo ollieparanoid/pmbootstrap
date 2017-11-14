@@ -35,6 +35,7 @@ import pmb.chroot.other
 import pmb.flasher
 import pmb.helpers.logging
 import pmb.helpers.other
+import pmb.helpers.repo
 import pmb.helpers.run
 import pmb.install
 import pmb.parse
@@ -155,6 +156,10 @@ def export(args):
 
 def menuconfig(args):
     pmb.build.menuconfig(args, args.package)
+
+
+def update(args):
+    pmb.helpers.repo.update(args, True)
 
 
 def kconfig_check(args):
