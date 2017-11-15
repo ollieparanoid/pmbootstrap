@@ -24,13 +24,18 @@ def bootimg(args, path):
     if not os.path.exists(path):
         raise RuntimeError("Could not find file '" + path + "'")
 
-    pmb.chroot.apk.install(args, ["unpackbootimg"])
+    pmb.chroot.apk.install(args, ["file", "unpackbootimg"])
 
     temp_path = pmb.chroot.other.tempfolder(args, "/tmp/bootimg_parser")
     bootimg_path = args.work + "/chroot_native" + temp_path + "/boot.img"
 
     # Copy the boot.img into the chroot temporary folder
     pmb.helpers.run.root(args, ["cp", path, bootimg_path])
+
+    file_output = pmb.chroot.user(args, ["file", "-b", "boot.img"], working_dir=temp_path,
+                                  return_stdout=True).rstrip()
+    if "android bootimg" not in file_output.lower():
+        raise RuntimeError("File is not an Android bootimg. (" + file_output + ")")
 
     # Extract all the files
     pmb.chroot.user(args, ["unpackbootimg", "-i", "boot.img"], working_dir=temp_path)

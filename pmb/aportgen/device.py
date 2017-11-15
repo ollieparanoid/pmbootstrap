@@ -82,20 +82,19 @@ def ask_for_flash_method(args):
 
 
 def ask_for_bootimg(args):
-    if not pmb.helpers.cli.confirm(args, "Do you want to extract fastboot information from an "
-                                   "existing boot.img?"):
-        return None
+    logging.info("You can analyze a known working boot.img file to automatically fill"
+                 " out the flasher information for your deviceinfo file. Either specify"
+                 " the path to an image or press return to skip this step (you can do"
+                 " it later with 'pmbootstrap bootimg_analyze').")
 
-    logging.info("Location of the 'boot.img' (stock boot.img, stock recovery.img, twrp.img, ...)")
     while True:
-        try:
-            path = os.path.expanduser(pmb.helpers.cli.ask(
-                args, "Path", None, None, False))
-            return pmb.parse.bootimg(args, path)
-        except KeyboardInterrupt:
+        path = os.path.expanduser(pmb.helpers.cli.ask(args, "Path", None, "", False))
+        if not len(path):
             return None
+        try:
+            return pmb.parse.bootimg(args, path)
         except Exception as e:
-            logging.fatal("ERROR: " + str(e) + ", Please try again.")
+            logging.fatal("ERROR: " + str(e) + ". Please try again.")
 
 
 def generate_deviceinfo_fastboot_content(args, bootimg):
