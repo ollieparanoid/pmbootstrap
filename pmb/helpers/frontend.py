@@ -115,22 +115,24 @@ def chroot(args):
 
 
 def config(args):
-    pmb.helpers.logging.disable()
-    if args.name and args.name not in pmb.config.defaults:
-        valid_keys = ", ".join(sorted(pmb.config.defaults.keys()))
-        print("The variable name you have specified is invalid.")
-        print("The following are supported: " + valid_keys)
-        sys.exit(1)
+    keys = pmb.config.config_keys
+    if args.name and args.name not in keys:
+        logging.info("NOTE: Valid config keys: " + ", ".join(keys))
+        raise RuntimeError("Invalid config key: " + args.name)
 
     cfg = pmb.config.load(args)
     if args.value:
         cfg["pmbootstrap"][args.name] = args.value
+        logging.info("Config changed: " + args.name + "='" + args.value + "'")
         pmb.config.save(args, cfg)
     elif args.name:
         value = cfg["pmbootstrap"].get(args.name, "")
         print(value)
     else:
         cfg.write(sys.stdout)
+
+    # Don't write the "Done" message
+    pmb.helpers.logging.disable()
 
 
 def index(args):
