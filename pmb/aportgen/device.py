@@ -100,15 +100,14 @@ def ask_for_bootimg(args):
 
 def generate_deviceinfo_fastboot_content(args, bootimg):
     if bootimg is None:
-        bootimg = {}
-        bootimg["cmdline"] = ""
-        bootimg["qcdt"] = "false"
-        bootimg["base"] = ""
-        bootimg["kernel_offset"] = ""
-        bootimg["ramdisk_offset"] = ""
-        bootimg["second_offset"] = ""
-        bootimg["tags_offset"] = ""
-        bootimg["pagesize"] = "2048"
+        bootimg = {"cmdline": "",
+                   "qcdt": "false",
+                   "base": "",
+                   "kernel_offset": "",
+                   "ramdisk_offset": "",
+                   "second_offset": "",
+                   "tags_offset": "",
+                   "pagesize": "2048"}
     return """\
         deviceinfo_kernel_cmdline=\"""" + bootimg["cmdline"] + """\"
         deviceinfo_generate_bootimg="true"
@@ -221,10 +220,9 @@ def generate(args, pkgname):
     has_keyboard = ask_for_keyboard(args)
     has_external_storage = ask_for_external_storage(args)
     flash_method = ask_for_flash_method(args)
+    bootimg = None
     if flash_method in ["fastboot", "heimdall-bootimg"]:
         bootimg = ask_for_bootimg(args)
-    else:
-        bootimg = None
 
     generate_deviceinfo(args, pkgname, name, manufacturer, arch, has_keyboard,
                         has_external_storage, flash_method, bootimg)
