@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with pmbootstrap.  If not, see <http://www.gnu.org/licenses/>.
 """
-import copy
 import os
 import sys
 import pytest
@@ -33,7 +32,6 @@ def args(request, tmpdir):
     import pmb.parse
     sys.argv = ["pmbootstrap.py", "chroot"]
     args = pmb.parse.arguments()
-    args = copy.deepcopy(args)
     args.log = args.work + "/log_testsuite.txt"
     pmb.helpers.logging.init(args)
     request.addfinalizer(args.logfd.close)
