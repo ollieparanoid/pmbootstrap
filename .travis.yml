@@ -13,7 +13,6 @@ script:
   - yes "" | ./pmbootstrap.py init
   - ./pmbootstrap.py config timestamp_based_rebuild False
   - ./pmbootstrap.py kconfig_check
-  - ./pmbootstrap.py config
   - test/testcases_fast.sh
   - test/check_checksums.py
 after_success:
