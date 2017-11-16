@@ -321,7 +321,7 @@ def arguments():
     args = parser.parse_args()
     cfg = pmb.config.load(args)
     for varname in cfg["pmbootstrap"]:
-        if varname not in args or not getattr(args, varname):
+        if varname not in args:
             value = cfg["pmbootstrap"][varname]
             if varname in pmb.config.defaults:
                 default = pmb.config.defaults[varname]
