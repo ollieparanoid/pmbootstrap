@@ -19,7 +19,6 @@ along with pmbootstrap.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
 import pytest
-import subprocess
 
 # Import from parent directory
 sys.path.append(os.path.realpath(
@@ -42,14 +41,15 @@ def args(tmpdir, request):
 
 
 def change_config(monkeypatch, path_config, key, value):
-    args = args_patched(monkeypatch,["pmbootstrap.py", "-c", path_config, "config",
-                         key, value])
+    args = args_patched(monkeypatch, ["pmbootstrap.py", "-c", path_config, "config",
+                                      key, value])
     pmb.helpers.frontend.config(args)
 
 
-def args_patched(monkeypatch,argv):
+def args_patched(monkeypatch, argv):
     monkeypatch.setattr(sys, "argv", argv)
     return pmb.parse.arguments()
+
 
 def test_config_user(args, tmpdir, monkeypatch):
     # Temporary paths
@@ -64,19 +64,19 @@ def test_config_user(args, tmpdir, monkeypatch):
 
     # Load and verify default config
     argv = ["pmbootstrap.py", "-c", path_config, "config"]
-    args_default = args_patched(monkeypatch,argv)
+    args_default = args_patched(monkeypatch, argv)
     assert args_default.work == path_work
-    assert args_default.timestamp_based_rebuild == True
+    assert args_default.timestamp_based_rebuild is True
 
     # Modify timestamp_based_rebuild
-    change_config(monkeypatch,path_config, "timestamp_based_rebuild", "false")
-    assert args_patched(monkeypatch,argv).timestamp_based_rebuild == False
-    change_config(monkeypatch,path_config, "timestamp_based_rebuild", "true")
-    assert args_patched(monkeypatch,argv).timestamp_based_rebuild == True
+    change_config(monkeypatch, path_config, "timestamp_based_rebuild", "false")
+    assert args_patched(monkeypatch, argv).timestamp_based_rebuild is False
+    change_config(monkeypatch, path_config, "timestamp_based_rebuild", "true")
+    assert args_patched(monkeypatch, argv).timestamp_based_rebuild is True
 
     # Modify jobs count
-    change_config(monkeypatch,path_config, "jobs", "9000")
-    assert args_patched(monkeypatch,argv).jobs == "9000"
+    change_config(monkeypatch, path_config, "jobs", "9000")
+    assert args_patched(monkeypatch, argv).jobs == "9000"
 
     # Override jobs count via commandline (-j)
     argv_jobs = ["pmbootstrap.py", "-c", path_config, "-j", "1000", "config"]
