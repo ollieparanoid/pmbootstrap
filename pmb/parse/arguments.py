@@ -317,22 +317,8 @@ def arguments():
     config.add_argument("name", nargs="?", help="variable name")
     config.add_argument("value", nargs="?", help="set variable to value")
 
-    # Use defaults from the user's config file
     args = parser.parse_args()
-    cfg = pmb.config.load(args)
-    for varname in cfg["pmbootstrap"]:
-        if varname not in args:
-            value = cfg["pmbootstrap"][varname]
-            if varname in pmb.config.defaults:
-                default = pmb.config.defaults[varname]
-                if isinstance(default, bool):
-                    value = (value.lower() == "true")
-            setattr(args, varname, value)
-
-    # Use defaults from pmb.config.defaults
-    for key, value in pmb.config.defaults.items():
-        if key not in args or not getattr(args, key):
-            setattr(args, key, value)
+    pmb.config.merge_with_args(args)
 
     # Replace $WORK in variables from any config
     for key, value in pmb.config.defaults.items():

@@ -24,6 +24,7 @@ import os
 #
 from pmb.config.load import load
 from pmb.config.save import save
+from pmb.config.merge_with_args import merge_with_args
 
 
 #
