@@ -36,14 +36,14 @@ def merge_with_args(args):
     """
     # Use defaults from the user's config file
     cfg = pmb.config.load(args)
-    for varname in cfg["pmbootstrap"]:
-        if varname not in args or getattr(args, varname) is None:
-            value = cfg["pmbootstrap"][varname]
-            if varname in pmb.config.defaults:
-                default = pmb.config.defaults[varname]
+    for key in cfg["pmbootstrap"]:
+        if key not in args or getattr(args, key) is None:
+            value = cfg["pmbootstrap"][key]
+            if key in pmb.config.defaults:
+                default = pmb.config.defaults[key]
                 if isinstance(default, bool):
                     value = (value.lower() == "true")
-            setattr(args, varname, value)
+            setattr(args, key, value)
 
     # Use defaults from pmb.config.defaults
     for key, value in pmb.config.defaults.items():
