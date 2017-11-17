@@ -81,3 +81,7 @@ def test_config_user(args, tmpdir, monkeypatch):
     # Override jobs count via commandline (-j)
     argv_jobs = ["pmbootstrap.py", "-c", path_config, "-j", "1000", "config"]
     assert args_patched(monkeypatch, argv_jobs).jobs == "1000"
+
+    # Override a config option with something that evaluates to false
+    argv_empty = ["pmbootstrap.py", "-c", path_config, "-w", "", "config"]
+    assert args_patched(monkeypatch, argv_empty).work == ""
