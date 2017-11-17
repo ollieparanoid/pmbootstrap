@@ -37,7 +37,7 @@ def merge_with_args(args):
     # Use defaults from the user's config file
     cfg = pmb.config.load(args)
     for varname in cfg["pmbootstrap"]:
-        if varname not in args or not getattr(args, varname):
+        if varname not in args or getattr(args, varname) is None:
             value = cfg["pmbootstrap"][varname]
             if varname in pmb.config.defaults:
                 default = pmb.config.defaults[varname]
