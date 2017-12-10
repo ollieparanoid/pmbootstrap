@@ -2,7 +2,7 @@
 
 pkgname="linux-lg-mako"
 pkgver=3.4.0
-pkgrel=1
+pkgrel=9
 pkgdesc="Nexus 4 kernel from Freedreno"
 arch="armhf"
 _carch="arm"
@@ -14,9 +14,9 @@ makedepends="perl sed installkernel bash gmp-dev bc linux-headers elfutils-dev"
 HOSTCC="${CC:-gcc}"
 HOSTCC="${HOSTCC#${CROSS_COMPILE}}"
 
-# Source (last commit of branch "mako-kernel")
+# Source (last commit of branch "mako-kernel-msm")
 _repository="kernel-msm"
-_commit="54b510b2e6bccf08fdf3a8ad00a62b27c2f8c1e6"
+_commit="8f5f0c9fe39fe0bf7b7e6166199cccab0dda1f7c"
 _config="config-${_flavor}.armhf"
 source="
 	$pkgname-$_commit.tar.gz::https://github.com/freedreno/${_repository}/archive/${_commit}.tar.gz
@@ -24,6 +24,7 @@ source="
 	compiler-gcc6.h
 	00_fix_return_address.patch
 	01_timeconst_fix.patch
+	02_freedreno_includes.patch
 "
 builddir="$srcdir/${_repository}-${_commit}"
 
@@ -33,8 +34,15 @@ prepare() {
 	# gcc6 support
 	cp -v "$srcdir/compiler-gcc6.h" "$builddir/include/linux/"
 
+	# Remove -Werror from all makefiles
+	find . -type f -name Makefile -print0 | \
+		xargs -0 sed -i 's/-Werror-/-W/g'
+	find . -type f -name Makefile -print0 | \
+		xargs -0 sed -i 's/-Werror//g'
+
+	# Prepare kernel config ('yes ""' for kernels lacking olddefconfig)
 	cp "$srcdir"/$_config "$builddir"/.config
-	make ARCH="$_carch" HOSTCC="$HOSTCC" silentoldconfig
+	yes "" | make ARCH="$_carch" HOSTCC="$HOSTCC" oldconfig
 }
 
 menuconfig() {
@@ -57,8 +65,9 @@ package() {
 		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
 }
 
-sha512sums="0b3d201b344bfe6a4823c0e3eb5bfbc93d614fa6280eee349a959e4e9479df40b5919e61c1acc6206984bd502c5e8f2979cad55589bef36dbb934d91242aa9e4  linux-lg-mako-54b510b2e6bccf08fdf3a8ad00a62b27c2f8c1e6.tar.gz
-76916f0f1e67c26f383150b2d292e4dfc07215fddada57b3b6d66c02693ef5cf6b6d21d839be32e0bed51ee756fb315a3523c7838d768e3886dce9c6dde6cbcf  config-lg-mako.armhf
+sha512sums="7e445af9f2d82ecbb95d06b748aa8757e931a0b43ff00c9032e00ca7dffbafb3117af6394b296404ea6af0ce16a5d7c586534b33cff80f13e5fc22c2d538a1fe  linux-lg-mako-8f5f0c9fe39fe0bf7b7e6166199cccab0dda1f7c.tar.gz
+45862ed0d0e1f2b505906da3bf7a515135492d024ff4ac51ea4430ba5acded424602641b7a0998d566791e0a9198893118637e7613de99d52143306d6dce5e75  config-lg-mako.armhf
 d80980e9474c82ba0ef1a6903b434d8bd1b092c40367ba543e72d2c119301c8b2d05265740e4104ca1ac5d15f6c4aa49e8776cb44264a9a28dc551e0d1850dcc  compiler-gcc6.h
 ea1d3b5a234fa565e3c1a792de48f4fc4e6023d281d303c8e319c7ef28edc5739ab0e4dea0139a41f0a5c7d03e27921ccaa214fd0ac5c72245a094ce60128864  00_fix_return_address.patch
-a2bb98fb8d988bbb659cae00fbaca360828300e9b98b90aed5ee0dd839c3f740696df4094a9021b813cbada06820d115aabed581a47cdd2c947e8d853c20b145  01_timeconst_fix.patch"
+a2bb98fb8d988bbb659cae00fbaca360828300e9b98b90aed5ee0dd839c3f740696df4094a9021b813cbada06820d115aabed581a47cdd2c947e8d853c20b145  01_timeconst_fix.patch
+74d607cc4e3c96e2e850cdf5642bf0060ec420e2f30e5bf71f950db49dd9bfbe3cadd0a7288dd10aba21bb499f6ac86f7cbc24ffd259764a7e098d03b15cb02e  02_freedreno_includes.patch"

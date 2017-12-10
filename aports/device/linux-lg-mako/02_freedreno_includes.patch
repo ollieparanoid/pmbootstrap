@@ -1,0 +1,171 @@
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 39a65af..12a63cd 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -16,7 +16,7 @@
+  */
+ 
+ #include "adreno_gpu.h"
+-#include "msm_gem.h"
++#include "../msm_gem.h"
+ 
+ struct adreno_info {
+ 	struct adreno_rev rev;
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index 1190a70..4978a5c 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -20,7 +20,7 @@
+ 
+ #include <linux/firmware.h>
+ 
+-#include "msm_gpu.h"
++#include "../msm_gpu.h"
+ 
+ #include "adreno_common.xml.h"
+ #include "adreno_pm4.xml.h"
+diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
+index 2fb4bfc..4a1be2a 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi.h
++++ b/drivers/gpu/drm/msm/dsi/dsi.h
+@@ -23,12 +23,12 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "dsi.xml.h"
+ #include "sfpb.xml.h"
+ #include "mmss_cc.xml.h"
+-#include "panel/mipi.h"
+-#include "panel/panel.h"
++#include "../panel/mipi.h"
++#include "../panel/panel.h"
+ 
+ struct dsi_phy;
+ struct dsi;
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+index fd5e668..03f1c11 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.h
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+@@ -23,7 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "hdmi.xml.h"
+ 
+ 
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_crtc.c b/drivers/gpu/drm/msm/mdp4/mdp4_crtc.c
+index 8eb6154..d4a2bbe 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_crtc.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_crtc.c
+@@ -18,9 +18,9 @@
+ #include "mdp4_kms.h"
+ 
+ #include <drm/drm_mode.h>
+-#include "drm_crtc.h"
+-#include "drm_crtc_helper.h"
+-#include "drm_flip_work.h"
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_flip_work.h>
+ 
+ struct mdp4_crtc {
+ 	struct drm_crtc base;
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/mdp4/mdp4_dsi_encoder.c
+index 7a4cd29..fa0a61e 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_dsi_encoder.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_dsi_encoder.c
+@@ -19,8 +19,8 @@
+ 
+ #include "mdp4_kms.h"
+ 
+-#include "drm_crtc.h"
+-#include "drm_crtc_helper.h"
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
+ 
+ 
+ struct mdp4_dsi_encoder {
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_dtv_encoder.c b/drivers/gpu/drm/msm/mdp4/mdp4_dtv_encoder.c
+index 5e0dcae..d4e3961 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_dtv_encoder.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_dtv_encoder.c
+@@ -19,8 +19,8 @@
+ 
+ #include "mdp4_kms.h"
+ 
+-#include "drm_crtc.h"
+-#include "drm_crtc_helper.h"
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
+ 
+ 
+ struct mdp4_dtv_encoder {
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_format.c b/drivers/gpu/drm/msm/mdp4/mdp4_format.c
+index 7b645f2..acead53 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_format.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_format.c
+@@ -16,7 +16,7 @@
+  */
+ 
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "mdp4_kms.h"
+ 
+ #define FMT(name, a, r, g, b, e0, e1, e2, e3, alpha, tight, c, cnt) { \
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_irq.c b/drivers/gpu/drm/msm/mdp4/mdp4_irq.c
+index 5c6b7fc..d89120f 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_irq.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_irq.c
+@@ -16,7 +16,7 @@
+  */
+ 
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "mdp4_kms.h"
+ 
+ 
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/mdp4/mdp4_kms.c
+index 6a241a1..b29184f 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_kms.c
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_kms.c
+@@ -16,7 +16,7 @@
+  */
+ 
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "mdp4_kms.h"
+ 
+ #include <mach/iommu.h>
+diff --git a/drivers/gpu/drm/msm/mdp4/mdp4_kms.h b/drivers/gpu/drm/msm/mdp4/mdp4_kms.h
+index 41bcdb9..847a7a2 100644
+--- a/drivers/gpu/drm/msm/mdp4/mdp4_kms.h
++++ b/drivers/gpu/drm/msm/mdp4/mdp4_kms.h
+@@ -22,7 +22,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ 
+-#include "msm_drv.h"
++#include "../msm_drv.h"
+ #include "mdp4.xml.h"
+ 
+ 
+diff --git a/drivers/gpu/drm/msm/panel/mipi.h b/drivers/gpu/drm/msm/panel/mipi.h
+index e9a45d1..d28828f 100644
+--- a/drivers/gpu/drm/msm/panel/mipi.h
++++ b/drivers/gpu/drm/msm/panel/mipi.h
+@@ -21,7 +21,7 @@
+ #include <linux/types.h>
+ 
+ /* TODO get rid of msm specifics.. */
+-#include "dsi/dsi.xml.h"
++#include "../dsi/dsi.xml.h"
+ 
+ /* This is something relatively generic that could be outside msm driver */
+ 
